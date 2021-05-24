@@ -1,0 +1,30 @@
+# Don't change these values
+data:
+  day:
+    value: 0
+    quest: ""
+  week:
+    value: 0
+    quest: ""
+  month:
+    value: 0
+    quest: ""
+
+
+quests:
+  1:
+    # Categories: MINEBLOCKS,FISH,KILLMOBS,KILLPLAYERS,    PLAYTIME
+    category: MINEBLOCKS
+    amount-needed: 100
+    material: STONE
+    activeName: "&cQuest &4I"
+    finishedName: "&aQuest &b1"
+    blacklisted-worlds:
+      - "blacklistworld1"
+    lore:
+      - ""
+      - "&7Goal:"
+      - "&cCatch 1 fish"
+      - ""
+      - "&7Progress:"
+      - "%progess_bar%"

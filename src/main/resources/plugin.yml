@@ -1,0 +1,5 @@
+name: CustomAchievements
+version: ${project.version}
+main: me.matzhilven.customachievements.CustomAchievements
+api-version: 1.16
+authors: [ MatzHilven ]
