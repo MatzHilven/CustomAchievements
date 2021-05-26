@@ -2,29 +2,76 @@
 data:
   day:
     value: 0
-    quest: ""
+    quest: "None"
   week:
     value: 0
-    quest: ""
+    quest: "None"
   month:
     value: 0
-    quest: ""
-
+    quest: "None"
 
 quests:
-  1:
-    # Categories: MINEBLOCKS,FISH,KILLMOBS,KILLPLAYERS,    PLAYTIME
+  '1':
+    # Categories: MINEBLOCKS,FISH,KILLMOBS,KILLPLAYERS,PLAYTIME
     category: MINEBLOCKS
+    # Types: DAILY,WEEKLY,MONTHLY
+    type: DAILY
     amount-needed: 100
-    material: STONE
+    block: COBBLESTONE
+    material: COBBLESTONE
     activeName: "&cQuest &4I"
-    finishedName: "&aQuest &b1"
+    finishedName: "&aQuest &bI"
     blacklisted-worlds:
       - "blacklistworld1"
     lore:
       - ""
       - "&7Goal:"
-      - "&cCatch 1 fish"
+      - "&cMine 100 cobble stone!"
       - ""
       - "&7Progress:"
-      - "%progess_bar%"
+      - "%progress_bar%"
+      - "&c%progress_percent%"
+      - "&c%progress_value%"
+    rewards:
+      - "give %player% diamond"
+  '2':
+    category: KILLMOBS
+    type: WEEKLY
+    mob: PIG
+    amount-needed: 10
+    material: COOKED_PORK
+    activeName: "&cQuest &4II"
+    finishedName: "&aQuest &bII"
+    blacklisted-worlds:
+      - "blacklistworld1"
+    lore:
+      - ""
+      - "&7Goal:"
+      - "&cKill 10 pigs!"
+      - ""
+      - "&7Progress:"
+      - "%progress_bar%"
+      - "&c%progress_percent%"
+      - "&c%progress_value%"
+    rewards:
+      - "give %player% stick 10"
+  '3':
+    category: FISH
+    type: MONTHLY
+    amount-needed: 5
+    material: FISHING_ROD
+    activeName: "&cQuest &4III"
+    finishedName: "&aQuest &bIII"
+    blacklisted-worlds:
+      - "blacklistworld1"
+    lore:
+      - ""
+      - "&7Goal:"
+      - "&cGet 10 fish!"
+      - ""
+      - "&7Progress:"
+      - "%progress_bar%"
+      - "&c%progress_percent%"
+      - "&c%progress_value%"
+    rewards:
+      - "give %player% diamond"
