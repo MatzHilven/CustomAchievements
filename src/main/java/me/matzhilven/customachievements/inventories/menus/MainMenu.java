@@ -57,22 +57,49 @@ public class MainMenu extends Menu {
                     if (!main.getQuestManager().getDailyQuest().isRewarded(p)) {
                         handleRewards(main.getQuestManager().getDailyQuest());
                         main.getQuestManager().getDailyQuest().addRewardedPlayer(p);
+                        inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
+                            .removeLoreLines(2)
+                            .addLoreLine("&c&lAlready received rewards!")
+                            .toItemStack());
+                        return;
                     }
+                    StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");
+                    break;
                 }
+                StringUtils.sendMessage(p, "&cYou haven't completed this quest!");
+                break;
             case 31:
                 if (main.getQuestManager().getWeeklyQuest().hasCompleted(p)) {
                     if (!main.getQuestManager().getWeeklyQuest().isRewarded(p)) {
                         handleRewards(main.getQuestManager().getWeeklyQuest());
                         main.getQuestManager().getWeeklyQuest().addRewardedPlayer(p);
+                        inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
+                            .removeLoreLines(2)
+                            .addLoreLine("&c&lAlready received rewards!")
+                            .toItemStack());
+                        return;
                     }
+                    StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");
+                    break;
                 }
+                StringUtils.sendMessage(p, "&cYou haven't completed this quest!");
+                break;
             case 32:
                 if (main.getQuestManager().getMonthlyQuest().hasCompleted(p)) {
                     if (!main.getQuestManager().getMonthlyQuest().isRewarded(p)) {
                         handleRewards(main.getQuestManager().getMonthlyQuest());
                         main.getQuestManager().getMonthlyQuest().addRewardedPlayer(p);
+                        inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
+                                .removeLoreLines(2)
+                                .addLoreLine("&c&lAlready received rewards!")
+                                .toItemStack());
+                        return;
                     }
+                    StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");
+                    break;
                 }
+                StringUtils.sendMessage(p, "&cYou haven't completed this quest!");
+                break;
         }
     }
 
@@ -114,7 +141,7 @@ public class MainMenu extends Menu {
         int amount = !dailyQuest.hasCompleted(p) ? dailyQuest.getPoints(p) : dailyQuest.getAmountNeeded();
         int total = dailyQuest.getAmountNeeded();
 
-        inventory.setItem(30, new ItemBuilder(dailyQuest.getMaterial())
+        ItemBuilder ib = new ItemBuilder(dailyQuest.getMaterial())
                 .setName(dailyQuest.getActiveName())
                 .setLore(dailyQuest.getLore())
                 .addLoreLine("")
@@ -122,14 +149,25 @@ public class MainMenu extends Menu {
                 .replace("%progress_bar%", getProgressBar(amount, total))
                 .replace("%progress_percent%", amount * 100 / total + "%")
                 .replace("%progress_value%",
-                        amount + "/" + total)
-                .toItemStack());
+                        amount + "/" + total);
+
+        if (dailyQuest.hasCompleted(p)) {
+            if (dailyQuest.isRewarded(p)) {
+                ib.addLoreLine("");
+                ib.addLoreLine("&c&lAlready received rewards!");
+            } else {
+                ib.addLoreLine("");
+                ib.addLoreLine("&a&lClick to receive rewards!");
+            }
+        }
+
+        inventory.setItem(30, ib.toItemStack());
 
         AbstractQuest weeklyQuest = main.getQuestManager().getWeeklyQuest();
         amount = !weeklyQuest.hasCompleted(p) ? weeklyQuest.getPoints(p) : weeklyQuest.getAmountNeeded();
         total = weeklyQuest.getAmountNeeded();
 
-        inventory.setItem(31, new ItemBuilder(weeklyQuest.getMaterial())
+        ib = new ItemBuilder(weeklyQuest.getMaterial())
                 .setName(weeklyQuest.getActiveName())
                 .setLore(weeklyQuest.getLore())
                 .addLoreLine("")
@@ -137,14 +175,25 @@ public class MainMenu extends Menu {
                 .replace("%progress_bar%", getProgressBar(amount, total))
                 .replace("%progress_percent%", amount * 100 / total + "%")
                 .replace("%progress_value%",
-                        amount + "/" + total)
-                .toItemStack());
+                        amount + "/" + total);
+
+        if (weeklyQuest.hasCompleted(p)) {
+            if (weeklyQuest.isRewarded(p)) {
+                ib.addLoreLine("");
+                ib.addLoreLine("&c&lAlready received rewards!");
+            } else {
+                ib.addLoreLine("");
+                ib.addLoreLine("&a&lClick to receive rewards!");
+            }
+        }
+
+        inventory.setItem(31, ib.toItemStack());
 
         AbstractQuest monthlyQuest = main.getQuestManager().getMonthlyQuest();
         amount = !monthlyQuest.hasCompleted(p) ? monthlyQuest.getPoints(p) : monthlyQuest.getAmountNeeded();
         total = monthlyQuest.getAmountNeeded();
 
-        inventory.setItem(32, new ItemBuilder(monthlyQuest.getMaterial())
+        ib = new ItemBuilder(monthlyQuest.getMaterial())
                 .setName(monthlyQuest.getActiveName())
                 .setLore(monthlyQuest.getLore())
                 .addLoreLine("")
@@ -152,31 +201,19 @@ public class MainMenu extends Menu {
                 .replace("%progress_bar%", getProgressBar(amount, total))
                 .replace("%progress_percent%", amount * 100 / total + "%")
                 .replace("%progress_value%",
-                        amount + "/" + total)
-                .toItemStack());
-        inventory.setItem(33, glass);
-    }
+                        amount + "/" + total);
 
-    private String getProgressBar(int current, int max) {
-
-        ChatColor completedColor = ChatColor.DARK_PURPLE;
-        ChatColor notCompletedColor = ChatColor.RED;
-
-        char symbol = '|';
-        int totalBars = 50;
-
-        float percent = (float) current / max;
-        int progressBars = (int) (totalBars * percent);
-
-        return notCompletedColor + "[" + Strings.repeat("" + completedColor + symbol, progressBars)
-                + Strings.repeat("" + notCompletedColor + symbol, totalBars - progressBars)
-                + notCompletedColor + "]";
-    }
-
-    private void handleRewards(AbstractQuest quest) {
-        for (String reward : quest.getRewards()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), reward.replace("%player%", p.getName()));
+        if (monthlyQuest.hasCompleted(p)) {
+            if (monthlyQuest.isRewarded(p)) {
+                ib.addLoreLine("");
+                ib.addLoreLine("&c&lAlready received rewards!");
+            } else {
+                ib.addLoreLine("");
+                ib.addLoreLine("&a&lClick to receive rewards!");
+            }
         }
-        StringUtils.sendMessage(p, "&aYou have been given the rewards for &r" + quest.getFinishedName());
+
+        inventory.setItem(32, ib.toItemStack());
+        inventory.setItem(33, glass);
     }
 }

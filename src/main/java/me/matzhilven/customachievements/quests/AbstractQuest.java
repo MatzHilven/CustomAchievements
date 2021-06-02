@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 public abstract class AbstractQuest implements Listener {
@@ -27,7 +27,7 @@ public abstract class AbstractQuest implements Listener {
     private final Category category;
     private final QuestType questType;
     private final int amountNeeded;
-    private HashMap<UUID, Integer> activePlayers;
+    private ConcurrentHashMap<UUID, Integer> activePlayers;
     private List<UUID> completedPlayers;
     private List<UUID> rewardedPlayers;
 
@@ -47,7 +47,7 @@ public abstract class AbstractQuest implements Listener {
         this.category = category;
         this.amountNeeded = amountNeeded;
 
-        this.activePlayers = new HashMap<>();
+        this.activePlayers = new ConcurrentHashMap<>();
         this.completedPlayers = new ArrayList<>();
         this.rewardedPlayers = new ArrayList<>();
     }
@@ -75,13 +75,22 @@ public abstract class AbstractQuest implements Listener {
 
         activePlayers.remove(p.getUniqueId());
         completedPlayers.add(p.getUniqueId());
-        ConfigUtils.setCompleted(p, getQuestType());
+
+        if (questType == QuestType.ALL_TIME) {
+            ConfigUtils.setCompleted(p, configID);
+        } else {
+            ConfigUtils.setCompleted(p, questType);
+        }
     }
 
     public void addRewardedPlayer(Player p) {
         completedPlayers.remove(p.getUniqueId());
         rewardedPlayers.add(p.getUniqueId());
-        ConfigUtils.setRewarded(p, getQuestType());
+        if (questType == QuestType.ALL_TIME) {
+            ConfigUtils.setRewarded(p, configID);
+        } else {
+            ConfigUtils.setRewarded(p, questType);
+        }
     }
 
     public void removePlayer(Player p) {
@@ -97,7 +106,7 @@ public abstract class AbstractQuest implements Listener {
     public void resetPlayer(Player p) {
         ConfigUtils.clearPlayer(p, getQuestType());
 
-        activePlayers.put(p.getUniqueId(),0);
+        activePlayers.put(p.getUniqueId(), 0);
         completedPlayers.remove(p.getUniqueId());
         rewardedPlayers.remove(p.getUniqueId());
     }
@@ -107,6 +116,6 @@ public abstract class AbstractQuest implements Listener {
     }
 
     public boolean isActive() {
-        return main.getQuestManager().getQuestsByCategory(this.category).contains(this);
+        return questType == QuestType.ALL_TIME || main.getQuestManager().getQuestsByCategory(this.category).contains(this);
     }
 }

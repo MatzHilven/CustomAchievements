@@ -31,14 +31,11 @@ public class PlayerListeners implements Listener {
         int weeklyAmount = ConfigUtils.getPlayerStats(p, QuestType.WEEKLY);
         int monthlyAmount = ConfigUtils.getPlayerStats(p, QuestType.MONTHLY);
 
-
         if (dailyQuest.getAmountNeeded() == dailyAmount || ConfigUtils.hasCompletedQuest(p,QuestType.DAILY)
-            || ConfigUtils.isRewarded(p,QuestType.DAILY)) {
+                || ConfigUtils.isRewarded(p,QuestType.DAILY)) {
             if (ConfigUtils.isRewarded(p, QuestType.DAILY)) {
-                System.out.println("rewarded");
                 dailyQuest.addRewardedPlayer(p);
             } else {
-                System.out.println("completed");
                 dailyQuest.addCompletedPlayer(p);
             }
         } else {
@@ -46,7 +43,7 @@ public class PlayerListeners implements Listener {
         }
 
         if (weeklyQuest.getAmountNeeded() == weeklyAmount || ConfigUtils.hasCompletedQuest(p,QuestType.WEEKLY)
-            || ConfigUtils.isRewarded(p,QuestType.WEEKLY)) {
+                || ConfigUtils.isRewarded(p,QuestType.WEEKLY)) {
             if (ConfigUtils.isRewarded(p, QuestType.WEEKLY)) {
                 weeklyQuest.addRewardedPlayer(p);
             } else {
@@ -57,7 +54,7 @@ public class PlayerListeners implements Listener {
         }
 
         if (monthlyQuest.getAmountNeeded() == monthlyAmount || ConfigUtils.hasCompletedQuest(p,QuestType.MONTHLY)
-            || ConfigUtils.isRewarded(p,QuestType.MONTHLY)){
+                || ConfigUtils.isRewarded(p,QuestType.MONTHLY)){
             if (ConfigUtils.isRewarded(p, QuestType.MONTHLY)) {
                 monthlyQuest.addRewardedPlayer(p);
             } else {
@@ -66,6 +63,22 @@ public class PlayerListeners implements Listener {
         } else {
             monthlyQuest.addActivePlayer(p, monthlyAmount);
         }
+
+
+        main.getQuestManager().getAllTimeQuests().forEach(quest -> {
+            int stats = ConfigUtils.getPlayerStats(p, quest.getConfigID());
+            if (quest.getAmountNeeded() == stats || ConfigUtils.hasCompletedQuest(p,quest.getConfigID())
+            || ConfigUtils.isRewarded(p,quest.getConfigID())) {
+                if (ConfigUtils.isRewarded(p, quest.getConfigID())) {
+                quest.addRewardedPlayer(p);
+            } else {
+                quest.addCompletedPlayer(p);
+            }
+            } else {
+                quest.addActivePlayer(p, stats);
+            }
+        });
+
 
         main.savePlayerData();
 
@@ -80,20 +93,27 @@ public class PlayerListeners implements Listener {
         AbstractQuest monthlyQuest = main.getQuestManager().getMonthlyQuest();
 
         if (dailyQuest.getActivePlayers().containsKey(p.getUniqueId())) {
-            ConfigUtils.setPlayerStats(p, QuestType.DAILY, dailyQuest.getActivePlayers().get(p.getUniqueId()));
+            ConfigUtils.setPlayerStats(p, QuestType.DAILY, dailyQuest.getPoints(p));
         }
 
         if (weeklyQuest.getActivePlayers().containsKey(p.getUniqueId())) {
-            ConfigUtils.setPlayerStats(p, QuestType.WEEKLY, weeklyQuest.getActivePlayers().get(p.getUniqueId()));
+            ConfigUtils.setPlayerStats(p, QuestType.WEEKLY, weeklyQuest.getPoints(p));
         }
 
         if (monthlyQuest.getActivePlayers().containsKey(p.getUniqueId())) {
-            ConfigUtils.setPlayerStats(p, QuestType.MONTHLY, monthlyQuest.getActivePlayers().get(p.getUniqueId()));
+            ConfigUtils.setPlayerStats(p, QuestType.MONTHLY, monthlyQuest.getPoints(p));
         }
 
         dailyQuest.removePlayer(p);
         weeklyQuest.removePlayer(p);
         monthlyQuest.removePlayer(p);
+
+        main.getQuestManager().getAllTimeQuests().forEach(quest -> {
+            if (quest.getActivePlayers().containsKey(p.getUniqueId())) {
+                ConfigUtils.setPlayerStats(p, quest.getConfigID(), quest.getPoints(p));
+            }
+            quest.removePlayer(p);
+        });
 
         main.savePlayerData();
     }

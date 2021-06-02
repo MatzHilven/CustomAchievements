@@ -1,14 +1,14 @@
 package me.matzhilven.customachievements.inventories.menus;
 
 import me.matzhilven.customachievements.inventories.Menu;
+import me.matzhilven.customachievements.quests.AbstractQuest;
 import me.matzhilven.customachievements.quests.Category;
 import me.matzhilven.customachievements.utils.ItemBuilder;
+import me.matzhilven.customachievements.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.bukkit.inventory.ItemStack;
 
 public class CategoryMenu extends Menu {
 
@@ -34,19 +34,54 @@ public class CategoryMenu extends Menu {
         if (e.getSlot() == 13) {
             MainMenu menu = new MainMenu(p);
             menu.open();
+            return;
         }
+
+        AbstractQuest quest = main.getQuestManager().getAllTimeQuestsByCategory(category).get(e.getSlot());
+        if (quest == null) return;
+        if (quest.hasCompleted(p)) {
+            if (!quest.isRewarded(p)) {
+                handleRewards(quest);
+                quest.addRewardedPlayer(p);
+
+                inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
+                .removeLoreLines(2)
+                .addLoreLine("")
+                .addLoreLine("&c&lAlready received rewards!")
+                .toItemStack());
+                return;
+            }
+            StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");
+            return;
+        }
+        StringUtils.sendMessage(p, "&cYou haven't completed this quest!");
+
     }
 
     @Override
     public void setMenuItems() {
-        main.getQuestManager().getQuestsByCategory(category).forEach(quest -> {
-            List<String> lore = quest.getLore();
+        main.getQuestManager().getAllTimeQuestsByCategory(category).forEach(quest -> {
+            int amount = quest.getPoints(p);
+            int total = quest.getAmountNeeded();
 
-            inventory.addItem(new ItemBuilder(quest.getMaterial())
+
+            ItemBuilder ib = new ItemBuilder(quest.getMaterial())
                     .setName(quest.getActiveName())
-                    .setLore(quest.getLore().stream().filter(line -> lore.indexOf(line) < 4)
-                            .collect(Collectors.toList()))
-                    .toItemStack());
+                    .setLore(quest.getLore())
+                    .replace("%progress_bar%", getProgressBar(amount, total))
+                    .replace("%progress_percent%", amount * 100 / total + "%")
+                    .replace("%progress_value%",
+                            amount + "/" + total);
+
+            if (quest.hasCompleted(p) && quest.isRewarded(p)) {
+                ib.addLoreLine("");
+                ib.addLoreLine("&c&lAlready received rewards!");
+            } else if (quest.hasCompleted(p) && !quest.isRewarded(p)) {
+                ib.addLoreLine("");
+                ib.addLoreLine("&a&lClick to receive rewards!");
+            }
+
+            inventory.addItem(ib.toItemStack());
         });
 
         inventory.setItem(13, new ItemBuilder(Material.BARRIER).setName("&c&lReturn")

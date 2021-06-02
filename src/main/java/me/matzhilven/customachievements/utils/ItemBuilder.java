@@ -124,6 +124,22 @@ public class ItemBuilder {
     }
 
     /**
+     * Remove lines from the current lore
+     * @param lines Amount of lines you want to remove from the lore
+     */
+    public ItemBuilder removeLoreLines(int lines) {
+        ItemMeta im = is.getItemMeta();
+        if (lines > im.getLore().size()) return this;
+        List<String> lore = im.getLore();
+        for (int i = 0; i < lines; i++) {
+            lore.remove(lore.size() - 1);
+        }
+        im.setLore(lore);
+        is.setItemMeta(im);
+        return this;
+    }
+
+    /**
      * Makes the current item glowing
      */
     public ItemBuilder addGlow() {

@@ -23,6 +23,8 @@ public class QuestManager {
 
     @Getter
     private final List<AbstractQuest> quests = new ArrayList<>();
+    @Getter
+    private final List<AbstractQuest> allTimeQuests = new ArrayList<>();
 
     @Getter @Setter
     private AbstractQuest dailyQuest;
@@ -52,16 +54,26 @@ public class QuestManager {
         return quests.stream().filter(quest -> quest.getConfigID().equalsIgnoreCase(configID)).findFirst().orElse(null);
     }
 
+    public AbstractQuest getAllTimeQuestByID(String configID) {
+        return allTimeQuests.stream().filter(quest -> quest.getConfigID().equalsIgnoreCase(configID)).findFirst().orElse(null);
+    }
+
     public List<AbstractQuest> getQuestsByCategory(Category category) {
         return quests.stream().filter(quest -> quest.getCategory().equals(category)).collect(Collectors.toList());
     }
 
-    private void loadQuests() {
+    public List<AbstractQuest> getAllTimeQuestsByCategory(Category category) {
+        return allTimeQuests.stream().filter(quest -> quest.getCategory().equals(category)).collect(Collectors.toList());
+    }
+
+    public void loadQuests() {
         FileConfiguration config = main.getConfig();
 
-        config.getConfigurationSection("quests").getKeys(false).forEach(quest -> {
-            Category category = Category.valueOf(config.getString("quests." + quest + ".category"));
+        for (String quest : config.getConfigurationSection("quests").getKeys(false)) {
+
             QuestType type = QuestType.valueOf(config.getString("quests." + quest + ".type"));
+
+            Category category = Category.valueOf(config.getString("quests." + quest + ".category"));
 
             Material material = Material.matchMaterial(config.getString("quests." + quest + ".material"));
 
@@ -79,32 +91,35 @@ public class QuestManager {
 
             switch (category) {
                 case FISH:
-                    abstractQuest = new FishQuest(quest,material,activeName,finishedName,
-                            lore,blacklistedWorlds,rewards,amountNeeded, type);
+                    abstractQuest = new FishQuest(quest, material, activeName, finishedName,
+                            lore, blacklistedWorlds, rewards, amountNeeded, type);
                     break;
                 case KILLMOBS:
                     EntityType entityType = EntityType.valueOf(config.getString("quests." + quest + ".mob").toUpperCase());
-                    abstractQuest = new MobKillQuest(quest,material,activeName,finishedName,
-                            lore,blacklistedWorlds,rewards,amountNeeded, entityType, type);
+                    abstractQuest = new MobKillQuest(quest, material, activeName, finishedName,
+                            lore, blacklistedWorlds, rewards, amountNeeded, entityType, type);
                     break;
                 case PLAYTIME:
-                    abstractQuest = new TimePlayedQuest(quest,material,activeName,finishedName,
-                            lore,blacklistedWorlds,rewards,amountNeeded, type);
+                    abstractQuest = new TimePlayedQuest(quest, material, activeName, finishedName,
+                            lore, blacklistedWorlds, rewards, amountNeeded, type);
                     break;
                 case MINEBLOCKS:
                     Material mineBlock = Material.matchMaterial(config.getString("quests." + quest + ".block"));
-                    abstractQuest = new BlocksMineQuest(quest,material,activeName,finishedName,
-                            lore,blacklistedWorlds,rewards,amountNeeded, mineBlock, type);
+                    abstractQuest = new BlocksMineQuest(quest, material, activeName, finishedName,
+                            lore, blacklistedWorlds, rewards, amountNeeded, mineBlock, type);
                     break;
                 case KILLPLAYERS:
-                    abstractQuest = new PlayerKillQuest(quest,material,activeName,finishedName,
-                            lore,blacklistedWorlds,rewards,amountNeeded, type);
+                    abstractQuest = new PlayerKillQuest(quest, material, activeName, finishedName,
+                            lore, blacklistedWorlds, rewards, amountNeeded, type);
                     break;
             }
 
-            quests.add(abstractQuest);
-
-        });
+            if (type == QuestType.ALL_TIME) {
+                allTimeQuests.add(abstractQuest);
+            } else {
+                quests.add(abstractQuest);
+            }
+        }
     }
 
     public void setRandomQuest(QuestType type) {
@@ -114,9 +129,9 @@ public class QuestManager {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        AbstractQuest newQuest = quests.stream().filter(quest -> quest.getQuestType() == QuestType.DAILY)
-                                .collect(Collectors.toList())
-                                .get(r.nextInt(quests.size()));
+                        List<AbstractQuest> typeQuests = quests.stream().filter(quest -> quest.getQuestType() == QuestType.DAILY)
+                                .collect(Collectors.toList());
+                        AbstractQuest newQuest = typeQuests.size() == 1 ? typeQuests.get(0): typeQuests.get(r.nextInt(typeQuests.size()));
                         if (dailyQuest == null || !dailyQuest.getCategory().equals(newQuest.getCategory())) {
                             dailyQuest = newQuest;
                             main.getConfig().set("data.day.quest", newQuest.getConfigID());
@@ -130,9 +145,9 @@ public class QuestManager {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        AbstractQuest newQuest = quests.stream().filter(quest -> quest.getQuestType() == QuestType.WEEKLY)
-                                .collect(Collectors.toList())
-                                .get(r.nextInt(quests.size()));
+                        List<AbstractQuest> typeQuests = quests.stream().filter(quest -> quest.getQuestType() == QuestType.WEEKLY)
+                                .collect(Collectors.toList());
+                        AbstractQuest newQuest = typeQuests.size() == 1 ? typeQuests.get(0): typeQuests.get(r.nextInt(typeQuests.size()));
                         if (weeklyQuest == null || !weeklyQuest.getCategory().equals(newQuest.getCategory())) {
                             weeklyQuest = newQuest;
                             main.getConfig().set("data.week.quest", newQuest.getConfigID());
@@ -146,9 +161,9 @@ public class QuestManager {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        AbstractQuest newQuest = quests.stream().filter(quest -> quest.getQuestType() == QuestType.MONTHLY)
-                                .collect(Collectors.toList())
-                                .get(r.nextInt(quests.size()));
+                        List<AbstractQuest> typeQuests = quests.stream().filter(quest -> quest.getQuestType() == QuestType.MONTHLY)
+                                .collect(Collectors.toList());
+                        AbstractQuest newQuest = typeQuests.size() == 1 ? typeQuests.get(0): typeQuests.get(r.nextInt(typeQuests.size()));
                         if (monthlyQuest == null || !monthlyQuest.getCategory().equals(newQuest.getCategory())) {
                             monthlyQuest = newQuest;
                             main.getConfig().set("data.month.quest", newQuest.getConfigID());

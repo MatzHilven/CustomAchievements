@@ -1,11 +1,13 @@
 package me.matzhilven.customachievements.inventories;
 
+import com.google.common.base.Strings;
 import me.matzhilven.customachievements.CustomAchievements;
+import me.matzhilven.customachievements.quests.AbstractQuest;
 import me.matzhilven.customachievements.utils.ItemBuilder;
 import me.matzhilven.customachievements.utils.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -14,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class Menu implements InventoryHolder {
     protected final CustomAchievements main = CustomAchievements.getInstance();
-    protected final FileConfiguration config = main.getConfig();
 
     protected final Player p;
     protected Inventory inventory;
@@ -62,5 +63,29 @@ public abstract class Menu implements InventoryHolder {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public String getProgressBar(int current, int max) {
+
+        ChatColor completedColor = ChatColor.DARK_PURPLE;
+        ChatColor bold = ChatColor.BOLD;
+        ChatColor notCompletedColor = ChatColor.RED;
+
+        char symbol = '|';
+        int totalBars = 50;
+
+        float percent = (float) current / max;
+        int progressBars = (int) (totalBars * percent);
+
+        return notCompletedColor + "[" + Strings.repeat("" + completedColor + bold + symbol, progressBars)
+                + Strings.repeat("" + notCompletedColor + bold + symbol, totalBars - progressBars)
+                + notCompletedColor + "]";
+    }
+
+    public void handleRewards(AbstractQuest quest) {
+        for (String reward : quest.getRewards()) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), reward.replace("%player%", p.getName()));
+        }
+        StringUtils.sendMessage(p, "&aYou have been given the rewards for &r" + quest.getFinishedName());
     }
 }
