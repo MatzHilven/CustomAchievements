@@ -37,8 +37,8 @@ public class MobKillQuest extends AbstractQuest {
 
             addPoint(killer);
             if (getPoints(killer) == getAmountNeeded()) {
-                StringUtils.sendMessage(killer, "&aYou completed the quest: &r" + getFinishedName());
-                StringUtils.sendMessage(killer, "&aOpen the achievements menu to claim your reward!");
+                StringUtils.sendMessage(killer, config.getString("messages.completed")
+                        .replace("%quest%", getFinishedName()));
 
                 addCompletedPlayer(killer);
             }

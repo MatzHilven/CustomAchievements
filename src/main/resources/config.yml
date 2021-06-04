@@ -10,11 +10,34 @@ data:
     value: 0
     quest: "None"
 
+progress:
+  not-completed: "&3"
+  completed: "&4"
+
+messages:
+  no-permission: "&cYou don't have the permission to execute this command!"
+  not-a-player: "&cThis command can only be executed by players!"
+  player-not-found: "&cCan't find the specified player!"
+  playtime: "&a%player% has played for &l%days%&ad &l%hours%&ah &l%minutes%&am"
+  reload: "&aSuccessfully reloaded plugin!"
+  usage-general: "&cUsage: /achievements [reset/reload]"
+  usage: "&cUsage: /achievements reset <type> [id] <player>!"
+  playtime-usage: "&cUsage: /playtime <player>"
+  progress-removed-alltime: "&aRemoved the progress for &l%player% &aon the &l%type% &aquest &l%id%!"
+  progress-removed: "&aRemoved the progress for &l%player% &aon the &l%type% &aquest!"
+  rewards-given: "&aYou have been given the rewards for &r%quest%"
+  already-received-rewards-menu: "&c&lAlready received rewards!"
+  already-received-rewards: "&cYou have already received the rewards for this quest!"
+  receive-rewards-menu: "&a&lClick to receive rewards!"
+  not-completed: "&cYou haven't completed this quest!"
+  completed: "&aYou completed the quest: &r%quest%. &aOpen the achievements menu to claim your reward!"
+
+
 quests:
   '1':
     # Categories: MINEBLOCKS,FISH,KILLMOBS,KILLPLAYERS,PLAYTIME
     category: MINEBLOCKS
-    # Types: DAILY,WEEKLY,MONTHLY
+    # Types: DAILY,WEEKLY,MONTHLY, ALL_TIME
     type: DAILY
     amount-needed: 100
     block: COBBLESTONE

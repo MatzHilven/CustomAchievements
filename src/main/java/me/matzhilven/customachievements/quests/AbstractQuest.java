@@ -5,6 +5,7 @@ import me.matzhilven.customachievements.CustomAchievements;
 import me.matzhilven.customachievements.utils.ConfigUtils;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractQuest implements Listener {
 
     protected final CustomAchievements main = CustomAchievements.getInstance();
+    protected final FileConfiguration config = main.getConfig();
     private final String configID;
     private final Material material;
     private final String activeName;

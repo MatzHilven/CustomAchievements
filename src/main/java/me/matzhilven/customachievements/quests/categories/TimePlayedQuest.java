@@ -30,8 +30,8 @@ public class TimePlayedQuest extends AbstractQuest {
                     if (getBlacklistedWorlds().contains(p.getWorld())) return;
                     addPoint(player);
                     if (getPoints(p) == getAmountNeeded()) {
-                        StringUtils.sendMessage(p, "&aYou completed the quest: &r" + getFinishedName());
-                        StringUtils.sendMessage(p, "&aOpen the achievements menu to claim your reward!");
+                        StringUtils.sendMessage(p, config.getString("messages.completed")
+                                .replace("%quest%", getFinishedName()));
 
                         addCompletedPlayer(p);
                     }

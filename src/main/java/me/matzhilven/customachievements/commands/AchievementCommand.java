@@ -13,10 +13,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import javax.swing.plaf.ViewportUI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,19 +25,21 @@ import java.util.stream.Collectors;
 public class AchievementCommand implements CommandExecutor, TabExecutor {
 
     private final CustomAchievements main;
+    private final FileConfiguration config;
 
     public AchievementCommand(CustomAchievements main) {
         this.main = main;
+        this.config = main.getConfig();
         main.getCommand("achievements").setExecutor(this);
         main.getCommand("achievements").setTabCompleter(this);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command lbl, String s, String[] args) {
 
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                StringUtils.sendMessage(sender, "&cThis command can only be executed by players!");
+                StringUtils.sendMessage(sender, config.getString("messages.not-a-player"));
                 return true;
             }
 
@@ -49,6 +51,7 @@ public class AchievementCommand implements CommandExecutor, TabExecutor {
                 StringUtils.sendMessage(sender, "&cYou don't have the permission to execute this command!");
                 return true;
             }
+
             main.reloadConfig();
 
             main.getQuestManager().getQuests().forEach(quest -> {
@@ -60,6 +63,8 @@ public class AchievementCommand implements CommandExecutor, TabExecutor {
                 Bukkit.getOnlinePlayers().stream().filter(p -> quest.getActivePlayers().containsKey(p.getUniqueId()))
                         .forEach(p -> ConfigUtils.setPlayerStats(p, quest.getConfigID(), quest.getPoints(p)));
             });
+
+            main.getQuestManager().flush();
 
             main.getQuestManager().loadQuests();
 
@@ -127,16 +132,16 @@ public class AchievementCommand implements CommandExecutor, TabExecutor {
                 }
             });
 
-            StringUtils.sendMessage(sender, "&aSuccessfully reloaded plugin!");
+            StringUtils.sendMessage(sender, config.getString("messages.reload"));
             return true;
         } else if (args[0].equalsIgnoreCase("reset")) {
             if (!sender.isOp()) {
-                StringUtils.sendMessage(sender, "&cYou don't have the permission to execute this command!");
+                StringUtils.sendMessage(sender, config.getString("messages.no-permission"));
                 return true;
             }
 
             if (args.length < 3) {
-                StringUtils.sendMessage(sender, "&cUsage: /achievements reset <type> [id] <player>!");
+                StringUtils.sendMessage(sender, config.getString("messages.usage"));
                 return true;
             }
 
@@ -146,33 +151,36 @@ public class AchievementCommand implements CommandExecutor, TabExecutor {
                 Player player = Bukkit.getPlayer(args[3]);
 
                 if (player == null) {
-                    StringUtils.sendMessage(sender, "&cCan't find specified player!");
+                    StringUtils.sendMessage(sender, config.getString("messages.player-not-found"));
                     return true;
                 }
 
                 main.getQuestManager().getAllTimeQuestByID(args[2].toLowerCase()).resetPlayer(player);
 
-                StringUtils.sendMessage(sender, "&aRemoved the progress for &l" + player.getName() + " &aon the &l" +
-                        type.toString() + " &aquest &l" + args[2] + "!");
+                StringUtils.sendMessage(sender, config.getString("messages.progress-removed-alltime")
+                .replace("%player%", player.getName())
+                .replace("%type%", type.toString())
+                .replace("%id%", args[2].toLowerCase()));
             } else {
                 Player player = Bukkit.getPlayer(args[2]);
 
                 if (player == null) {
-                    StringUtils.sendMessage(sender, "&cCan't find specified player!");
+                    StringUtils.sendMessage(sender, config.getString("messages.player-not-found"));
                     return true;
                 }
 
                 main.getQuestManager().getQuest(type).resetPlayer(player);
 
-                StringUtils.sendMessage(sender, "&aRemoved the progress for &l" + player.getName() + " &aon the &l" +
-                        type.toString() + " &aquest!");
+                StringUtils.sendMessage(sender, config.getString("messages.progress-removed")
+                        .replace("%player%", player.getName())
+                        .replace("%type%", type.toString()));
             }
 
             return true;
 
         }
 
-        StringUtils.sendMessage(sender, "&cUsage: /achievements [reset/reload]");
+        StringUtils.sendMessage(sender, config.getString("messages.usage-general"));
         return true;
     }
 

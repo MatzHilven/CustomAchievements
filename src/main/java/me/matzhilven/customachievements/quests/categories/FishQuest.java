@@ -28,8 +28,8 @@ public class FishQuest extends AbstractQuest {
             if (hasCompleted(e.getPlayer())) return;
             addPoint(e.getPlayer());
             if (getPoints(e.getPlayer()) == getAmountNeeded()) {
-                StringUtils.sendMessage(e.getPlayer(), "&aYou completed the quest: &r" + getFinishedName());
-                StringUtils.sendMessage(e.getPlayer(), "&aOpen the achievements menu to claim your reward!");
+                StringUtils.sendMessage(e.getPlayer(), config.getString("messages.completed")
+                        .replace("%quest%", getFinishedName()));
 
                 addCompletedPlayer(e.getPlayer());
             }

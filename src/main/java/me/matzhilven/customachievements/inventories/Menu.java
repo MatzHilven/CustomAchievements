@@ -8,6 +8,7 @@ import me.matzhilven.customachievements.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -15,7 +16,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class Menu implements InventoryHolder {
+
     protected final CustomAchievements main = CustomAchievements.getInstance();
+    protected FileConfiguration config = main.getConfig();
 
     protected final Player p;
     protected Inventory inventory;
@@ -67,9 +70,36 @@ public abstract class Menu implements InventoryHolder {
 
     public String getProgressBar(int current, int max) {
 
-        ChatColor completedColor = ChatColor.DARK_PURPLE;
+        boolean notCompletedBold = false;
+        boolean completedBold = false;
+
         ChatColor bold = ChatColor.BOLD;
-        ChatColor notCompletedColor = ChatColor.RED;
+
+        String completedColor;
+        String notCompletedColor;
+
+        if (config.getString("progress.not-completed").length() > 2) {
+            notCompletedBold = true;
+            notCompletedColor = config.getString("progress.not-completed").substring(0,2);
+        } else {
+            notCompletedColor = config.getString("progress.not-completed");
+        }
+
+        if (config.getString("progress.completed").length() > 2) {
+            completedBold = true;
+            completedColor = config.getString("progress.completed").substring(0,2);
+        } else {
+            completedColor = config.getString("progress.completed");
+        }
+
+        if (completedColor == null) {
+            System.out.println("null");
+            completedColor = "&2";
+        }
+        if (notCompletedColor == null) {
+            System.out.println("null1");
+            notCompletedColor = "&4";
+        }
 
         char symbol = '|';
         int totalBars = 50;
@@ -77,15 +107,15 @@ public abstract class Menu implements InventoryHolder {
         float percent = (float) current / max;
         int progressBars = (int) (totalBars * percent);
 
-        return notCompletedColor + "[" + Strings.repeat("" + completedColor + bold + symbol, progressBars)
-                + Strings.repeat("" + notCompletedColor + bold + symbol, totalBars - progressBars)
-                + notCompletedColor + "]";
+        return StringUtils.colorize(notCompletedColor + "[&r" + Strings.repeat("" + completedColor + ((completedBold) ? bold : "") + symbol, progressBars)
+                + Strings.repeat("&r" + notCompletedColor + ((notCompletedBold) ? bold : "") + symbol, totalBars - progressBars)
+                + "&r" + notCompletedColor + "]");
     }
 
     public void handleRewards(AbstractQuest quest) {
         for (String reward : quest.getRewards()) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), reward.replace("%player%", p.getName()));
         }
-        StringUtils.sendMessage(p, "&aYou have been given the rewards for &r" + quest.getFinishedName());
+        StringUtils.sendMessage(p, config.getString("messages.rewards-given").replace("%quest%", quest.getFinishedName()));
     }
 }

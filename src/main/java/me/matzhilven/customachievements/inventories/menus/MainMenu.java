@@ -1,13 +1,10 @@
 package me.matzhilven.customachievements.inventories.menus;
 
-import com.google.common.base.Strings;
 import me.matzhilven.customachievements.inventories.Menu;
 import me.matzhilven.customachievements.quests.AbstractQuest;
 import me.matzhilven.customachievements.quests.Category;
 import me.matzhilven.customachievements.utils.ItemBuilder;
 import me.matzhilven.customachievements.utils.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -58,15 +55,16 @@ public class MainMenu extends Menu {
                         handleRewards(main.getQuestManager().getDailyQuest());
                         main.getQuestManager().getDailyQuest().addRewardedPlayer(p);
                         inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
-                            .removeLoreLines(2)
-                            .addLoreLine("&c&lAlready received rewards!")
-                            .toItemStack());
+                                .removeLoreLines(2)
+                                .addLoreLine("")
+                                .addLoreLine(config.getString("messages.already-received-rewards-menu"))
+                                .toItemStack());
                         return;
                     }
-                    StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");
+                    StringUtils.sendMessage(p, config.getString("messages.already-received-rewards"));
                     break;
                 }
-                StringUtils.sendMessage(p, "&cYou haven't completed this quest!");
+                StringUtils.sendMessage(p, config.getString("messages.not-completed"));
                 break;
             case 31:
                 if (main.getQuestManager().getWeeklyQuest().hasCompleted(p)) {
@@ -74,15 +72,16 @@ public class MainMenu extends Menu {
                         handleRewards(main.getQuestManager().getWeeklyQuest());
                         main.getQuestManager().getWeeklyQuest().addRewardedPlayer(p);
                         inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
-                            .removeLoreLines(2)
-                            .addLoreLine("&c&lAlready received rewards!")
-                            .toItemStack());
+                                .removeLoreLines(2)
+                                .addLoreLine("")
+                                .addLoreLine(config.getString("messages.already-received-rewards-menu"))
+                                .toItemStack());
                         return;
                     }
-                    StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");
+                    StringUtils.sendMessage(p, config.getString("messages.already-received-rewards"));
                     break;
                 }
-                StringUtils.sendMessage(p, "&cYou haven't completed this quest!");
+                StringUtils.sendMessage(p, config.getString("messages.not-completed"));
                 break;
             case 32:
                 if (main.getQuestManager().getMonthlyQuest().hasCompleted(p)) {
@@ -91,14 +90,15 @@ public class MainMenu extends Menu {
                         main.getQuestManager().getMonthlyQuest().addRewardedPlayer(p);
                         inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
                                 .removeLoreLines(2)
-                                .addLoreLine("&c&lAlready received rewards!")
+                                .addLoreLine("")
+                                .addLoreLine(config.getString("messages.already-received-rewards-menu"))
                                 .toItemStack());
                         return;
                     }
-                    StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");
+                    StringUtils.sendMessage(p, config.getString("messages.already-received-rewards"));
                     break;
                 }
-                StringUtils.sendMessage(p, "&cYou haven't completed this quest!");
+                StringUtils.sendMessage(p, config.getString("messages.not-completed"));
                 break;
         }
     }
@@ -154,10 +154,10 @@ public class MainMenu extends Menu {
         if (dailyQuest.hasCompleted(p)) {
             if (dailyQuest.isRewarded(p)) {
                 ib.addLoreLine("");
-                ib.addLoreLine("&c&lAlready received rewards!");
+                ib.addLoreLine(config.getString("messages.already-received-rewards-menu"));
             } else {
                 ib.addLoreLine("");
-                ib.addLoreLine("&a&lClick to receive rewards!");
+                ib.addLoreLine(config.getString("messages.receive-rewards-menu"));
             }
         }
 
@@ -180,10 +180,10 @@ public class MainMenu extends Menu {
         if (weeklyQuest.hasCompleted(p)) {
             if (weeklyQuest.isRewarded(p)) {
                 ib.addLoreLine("");
-                ib.addLoreLine("&c&lAlready received rewards!");
+                ib.addLoreLine(config.getString("messages.already-received-rewards-menu"));
             } else {
                 ib.addLoreLine("");
-                ib.addLoreLine("&a&lClick to receive rewards!");
+                ib.addLoreLine(config.getString("messages.receive-rewards-menu"));
             }
         }
 
@@ -206,10 +206,10 @@ public class MainMenu extends Menu {
         if (monthlyQuest.hasCompleted(p)) {
             if (monthlyQuest.isRewarded(p)) {
                 ib.addLoreLine("");
-                ib.addLoreLine("&c&lAlready received rewards!");
+                ib.addLoreLine(config.getString("messages.already-received-rewards-menu"));
             } else {
                 ib.addLoreLine("");
-                ib.addLoreLine("&a&lClick to receive rewards!");
+                ib.addLoreLine(config.getString("messages.receive-rewards-menu"));
             }
         }
 

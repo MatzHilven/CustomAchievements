@@ -175,4 +175,9 @@ public class QuestManager {
                 break;
         }
     }
+
+    public void flush() {
+        quests.clear();
+        allTimeQuests.clear();
+    }
 }
