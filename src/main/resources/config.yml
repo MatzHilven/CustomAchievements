@@ -60,7 +60,8 @@ quests:
   '2':
     category: KILLMOBS
     type: WEEKLY
-    mob: PIG
+    mob:
+      - PIG
     amount-needed: 10
     material: COOKED_PORK
     activeName: "&cQuest &4II"

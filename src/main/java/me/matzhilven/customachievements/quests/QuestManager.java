@@ -95,7 +95,9 @@ public class QuestManager {
                             lore, blacklistedWorlds, rewards, amountNeeded, type);
                     break;
                 case KILLMOBS:
-                    EntityType entityType = EntityType.valueOf(config.getString("quests." + quest + ".mob").toUpperCase());
+                    List<EntityType> entityType = config.getStringList("quests." + quest + ".mob")
+                            .stream().map(mob -> EntityType.valueOf(mob.toUpperCase())).collect(Collectors.toList());
+
                     abstractQuest = new MobKillQuest(quest, material, activeName, finishedName,
                             lore, blacklistedWorlds, rewards, amountNeeded, entityType, type);
                     break;
@@ -119,6 +121,7 @@ public class QuestManager {
             } else {
                 quests.add(abstractQuest);
             }
+            Bukkit.getLogger().info(String.format("[%s] Loaded Quest " + quest, main.getDescription().getName()));
         }
     }
 

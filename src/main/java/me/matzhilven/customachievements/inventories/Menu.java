@@ -44,7 +44,7 @@ public abstract class Menu implements InventoryHolder {
 
     public void fillSides() {
         ItemStack glass = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 3)
-                .setName("")
+                .setName(" ")
                 .addGlow()
                 .toItemStack();
 
@@ -93,11 +93,9 @@ public abstract class Menu implements InventoryHolder {
         }
 
         if (completedColor == null) {
-            System.out.println("null");
             completedColor = "&2";
         }
         if (notCompletedColor == null) {
-            System.out.println("null1");
             notCompletedColor = "&4";
         }
 

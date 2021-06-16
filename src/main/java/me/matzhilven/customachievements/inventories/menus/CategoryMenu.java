@@ -8,7 +8,6 @@ import me.matzhilven.customachievements.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class CategoryMenu extends Menu {
 
@@ -21,7 +20,7 @@ public class CategoryMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return "&cAchievements: " + category.toString();
+        return "&cAchievements: " + category.getName();
     }
 
     @Override
@@ -45,10 +44,10 @@ public class CategoryMenu extends Menu {
                 quest.addRewardedPlayer(p);
 
                 inventory.setItem(e.getSlot(), new ItemBuilder(e.getCurrentItem())
-                .removeLoreLines(2)
-                .addLoreLine("")
-                .addLoreLine("&c&lAlready received rewards!")
-                .toItemStack());
+                        .removeLoreLines(2)
+                        .addLoreLine("")
+                        .addLoreLine("&c&lAlready received rewards!")
+                        .toItemStack());
                 return;
             }
             StringUtils.sendMessage(p, "&cYou have already received the rewards for this quest!");

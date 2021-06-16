@@ -22,6 +22,7 @@ public class FishQuest extends AbstractQuest {
     @EventHandler
     private void onFish(PlayerFishEvent e) {
         if (e.getCaught() == null) return;
+        if (e.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
 
         if (isActive()) {
             if (getBlacklistedWorlds().contains(e.getPlayer().getWorld())) return;

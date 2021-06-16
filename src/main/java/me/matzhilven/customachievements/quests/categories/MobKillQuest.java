@@ -15,10 +15,10 @@ import java.util.List;
 
 public class MobKillQuest extends AbstractQuest {
 
-    private final EntityType entityType;
+    private final List<EntityType> entityType;
 
     public MobKillQuest(String configID, Material material, String activeName, String finishedName, List<String> lore,
-                        List<World> blacklistedWorlds, List<String> rewards, int amountNeeded, EntityType entityType,
+                        List<World> blacklistedWorlds, List<String> rewards, int amountNeeded, List<EntityType> entityType,
                         QuestType questType) {
         super(configID, material, activeName, finishedName, lore, blacklistedWorlds, rewards, Category.KILLMOBS, questType,
                 amountNeeded);
@@ -32,7 +32,7 @@ public class MobKillQuest extends AbstractQuest {
 
         if (isActive()) {
             if (getBlacklistedWorlds().contains(killer.getWorld())) return;
-            if (!e.getEntity().getType().equals(entityType)) return;
+            if (!entityType.contains(e.getEntity().getType())) return;
             if (hasCompleted(killer)) return;
 
             addPoint(killer);

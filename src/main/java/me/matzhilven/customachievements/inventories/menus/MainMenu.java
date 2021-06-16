@@ -108,7 +108,7 @@ public class MainMenu extends Menu {
         fillSides();
 
         ItemStack glass = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 3)
-                .setName("")
+                .setName(" ")
                 .addGlow()
                 .toItemStack();
 
