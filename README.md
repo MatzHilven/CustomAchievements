@@ -1,6 +1,6 @@
 # CustomAchievements
 
-Fully customizable quest system
+Fully customizable quest system, all messages changeable in config
 
 Categories:
 - Kill Players
